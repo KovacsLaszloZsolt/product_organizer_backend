@@ -20,21 +20,27 @@ model User {
   role Role @default(BASIC)
 }
 
-model Product {
-  id Int @id @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  name String
-  description String?
-  category Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  owner ProductOwner @relation(fields: [ownerId], references: [id])
-  ownerId Int
-  pictures String[]
-}
+// Név -
+// Leírás -
+// Méret
+// Almbumhely
+// Fotó -
+// Felhasználónév -
+// Ár
 
+// model User {
+//   id    Int    @id @default(autoincrement())
+//   posts Post[]
+// }
+
+// model Post {
+//   id       Int  @id @default(autoincrement())
+//   author   User @relation(fields: [authorId], references: [id])
+//   authorId Int
+// }
 model Category {
   id Int @id @default(autoincrement())
+  
   created_at DateTime @default(now())
 
   name String @unique
@@ -48,6 +54,21 @@ model ProductOwner {
 
   name String @unique
   products Product[]
+}
+model Product {
+  id Int @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  name String
+  description String?
+  categoryId Int?
+  category Category? @relation(fields: [categoryId], references: [id])
+  ownerId Int?
+  owner ProductOwner? @relation(fields: [ownerId], references: [id])
+  pictures String[]
+  price Int?
+  size Int?
+  picturesRoute String?
 }
 
 enum Role {
