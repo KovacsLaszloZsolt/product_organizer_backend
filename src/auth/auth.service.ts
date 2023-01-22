@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { AuthDto } from 'src/dto';
+import { AuthDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
@@ -52,7 +52,7 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const payload = { id: userId, email: email };
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15min',
+      expiresIn: '90min',
       secret: process.env.JWT_SECRET_KEY,
     });
     return { access_token: token };

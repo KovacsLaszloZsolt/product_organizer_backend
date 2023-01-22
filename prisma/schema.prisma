@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,64 +8,48 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  email String @unique
-  password String
-  role Role @default(BASIC)
+  id         Int       @id @default(autoincrement()) @unique
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  email      String    @unique
+  password   String
+  role       Role      @default(BASIC)
+  deleted_at DateTime?
 }
 
-// Név -
-// Leírás -
-// Méret
-// Almbumhely
-// Fotó -
-// Felhasználónév -
-// Ár
-
-// model User {
-//   id    Int    @id @default(autoincrement())
-//   posts Post[]
-// }
-
-// model Post {
-//   id       Int  @id @default(autoincrement())
-//   author   User @relation(fields: [authorId], references: [id])
-//   authorId Int
-// }
 model Category {
-  id Int @id @default(autoincrement())
-  
-  created_at DateTime @default(now())
-
-  name String @unique
-  products Product[]
+  id         Int       @id @default(autoincrement()) @unique
+  created_at DateTime  @default(now())
+  name       String    @unique
+  deleted_at DateTime?
+  updated_at DateTime  @updatedAt
+  products   Product[]
 }
 
 model ProductOwner {
-  id Int @id @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  name String @unique
-  products Product[]
+  id         Int       @id @default(autoincrement()) @unique
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  name       String    @unique
+  deleted_at DateTime?
+  products   Product[]
 }
+
 model Product {
-  id Int @id @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  name String
-  description String?
-  categoryId Int?
-  category Category? @relation(fields: [categoryId], references: [id])
-  ownerId Int?
-  owner ProductOwner? @relation(fields: [ownerId], references: [id])
-  pictures String[]
-  price Int?
-  size Int?
+  id            Int           @id @default(autoincrement()) @unique
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+  name          String
+  description   String?
+  pictures      String[]
+  price         Int?
+  size          Int?
   picturesRoute String?
+  ownerId       Int?
+  categoryId    Int?
+  deleted_at    DateTime?
+  category      Category?     @relation(fields: [categoryId], references: [id])
+  owner         ProductOwner? @relation(fields: [ownerId], references: [id])
 }
 
 enum Role {
