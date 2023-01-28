@@ -16,6 +16,9 @@ import { RolesGuard } from 'src/auth/guard';
 import { CreateOwnerDto } from './dto/createOwner.dto';
 import { OwnerService } from './owner.service';
 import { ProductService } from 'src/product/product.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { isEmpty } from 'lodash';
+import { UpdateOwnerDto } from './dto';
 
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Roles('ADMIN')
@@ -29,6 +32,17 @@ export class OwnerController {
   @Post()
   async create(@Body() createOwnerDto: CreateOwnerDto) {
     try {
+      const deletedOwner = await this.ownerService.findAll({
+        name: createOwnerDto.name,
+        NOT: { deleted_at: null },
+      });
+
+      if (!isEmpty(deletedOwner)) {
+        return await this.ownerService.update(deletedOwner[0].id, {
+          deleted_at: null,
+        });
+      }
+
       const newOwner = await this.ownerService.create(createOwnerDto);
       return newOwner;
     } catch (err) {
@@ -40,13 +54,13 @@ export class OwnerController {
 
   @Get('')
   async getAllOwner() {
-    return await this.ownerService.findAll();
+    return await this.ownerService.findAll({ deleted_at: null });
   }
 
   @Put('/:id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateOwnerDto: CreateOwnerDto,
+    @Body() updateOwnerDto: UpdateOwnerDto,
   ) {
     try {
       const owner = await this.ownerService.findOne({ id });

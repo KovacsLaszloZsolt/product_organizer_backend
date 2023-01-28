@@ -48,6 +48,7 @@ model Product {
   ownerId       Int?
   categoryId    Int?
   deleted_at    DateTime?
+  status Status @default(AVAILABLE)
   category      Category?     @relation(fields: [categoryId], references: [id])
   owner         ProductOwner? @relation(fields: [ownerId], references: [id])
 }
@@ -55,4 +56,10 @@ model Product {
 enum Role {
   BASIC
   ADMIN
+}
+
+enum Status {
+  AVAILABLE
+  BOOKED
+  SOLD
 }

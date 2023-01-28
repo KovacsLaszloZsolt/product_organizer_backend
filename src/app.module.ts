@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { ProductsModule } from './product/product.module';
 import { OwnerModule } from './owner/owner.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { OwnerModule } from './owner/owner.module';
     UserModule,
     ProductsModule,
     OwnerModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -32,6 +32,8 @@ export class ProductService {
       filter.ownerId = ownerId;
     }
 
+    filter.deleted_at = null;
+
     return this.prisma.product.findMany({
       where: filter,
       include: {
@@ -52,7 +54,13 @@ export class ProductService {
   }
 
   async findOne(id: number): Promise<Product> {
-    const product = await this.prisma.product.findUnique({ where: { id } });
+    const filter = {} as Record<string, unknown>;
+
+    filter.id = id;
+    filter.deleted_at = null;
+    const product = await this.prisma.product.findUnique({
+      where: filter,
+    });
 
     if (!product) {
       throw new NotFoundException();

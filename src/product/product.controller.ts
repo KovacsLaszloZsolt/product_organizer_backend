@@ -9,20 +9,29 @@ import {
   UseGuards,
   ParseIntPipe,
   BadRequestException,
+  Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import {
+  CreateProductDto,
+  FindAllProductDto,
+  UpdateProductDto,
+} from './dto/index.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guard';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { OwnerService } from 'src/owner/owner.service';
+import { CategoryService } from 'src/category/category.service';
+import { isEmpty } from 'lodash';
 
-@Controller('api/products')
+@Controller('api/product')
 export class ProductController {
   constructor(
     private readonly productsService: ProductService,
     private readonly ownerService: OwnerService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -33,23 +42,34 @@ export class ProductController {
   }
 
   @Get()
-  async findAll(
-    // @Query('category') category: string,
-    // @Query('owner') owner: string,
-    @Param('category', ParseIntPipe) category: number,
-    @Param('owner', ParseIntPipe) owner: number,
-  ) {
-    const selectedOwner = await this.ownerService.findOne({ id: owner });
+  // @UsePipes(new ValidationPipe({ transform: true }))
+  async findAll(@Query() params?: FindAllProductDto) {
+    const filter = {} as Record<string, unknown>;
 
-    if (!selectedOwner) {
-      throw new BadRequestException('Invalid owner id');
+    const { owner, category } = params ?? {};
+    if (owner) {
+      const selectedOwner = await this.ownerService.findAll({ id: owner });
+
+      if (isEmpty(selectedOwner)) {
+        throw new BadRequestException('Invalid owner id');
+      }
+
+      filter.ownerId = owner;
     }
 
-    // const selectedCategory = ADD category VALIDATION
-    return await this.productsService.findAll({
-      categoryId: category,
-      ownerId: owner,
-    });
+    if (category) {
+      const selectedCategory = await this.categoryService.findAll({
+        id: category,
+      });
+
+      if (isEmpty(selectedCategory)) {
+        throw new BadRequestException('Invalid category id');
+      }
+
+      filter.categoryId = category;
+    }
+
+    return await this.productsService.findAll(filter);
   }
 
   @Get(':id')
