@@ -1,26 +1,29 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { AuthDto } from 'src/auth/dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import * as bcrypt from 'bcrypt';
+import { AuthDto, SignUpDto } from 'src/auth/dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService, private jwt: JwtService) {}
-  async signUp(dto: AuthDto) {
+  async signUp(dto: SignUpDto) {
     const salt = bcrypt.genSaltSync();
     const hash = bcrypt.hashSync(dto.password, salt);
 
+    const { password, ...rest } = dto;
     try {
       const user = await this.prisma.user.create({
         data: {
-          email: dto.email,
+          ...rest,
           password: hash,
         },
         select: {
           id: true,
           email: true,
+          firstName: true,
+          lastName: true,
         },
       });
 
@@ -43,18 +46,18 @@ export class AuthService {
       throw new BadRequestException('Invalid email/password');
     }
 
-    return this.signToken(user.id, user.email);
+    const token = await this.signToken(user.id, user.email);
+    const { password, ...rest } = user;
+
+    return { ...rest, token };
   }
 
-  async signToken(
-    userId: number,
-    email: string,
-  ): Promise<{ access_token: string }> {
+  async signToken(userId: number, email: string): Promise<string> {
     const payload = { id: userId, email: email };
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '90min',
       secret: process.env.JWT_SECRET_KEY,
     });
-    return { access_token: token };
+    return token;
   }
 }

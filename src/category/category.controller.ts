@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { isEmpty } from 'lodash';
-import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Roles } from 'src/auth/decorator';
 import { RolesGuard } from 'src/auth/guard';
 import { ProductService } from 'src/product/product.service';
 import { CategoryService } from './category.service';
@@ -61,6 +61,7 @@ export class CategoryController {
   ) {
     try {
       const category = await this.categoryService.findOne({ id });
+
       if (!category) {
         throw new BadRequestException('Category not found');
       }
@@ -69,6 +70,7 @@ export class CategoryController {
         id,
         updateCategoryDto,
       );
+
       return updatedCategory;
     } catch (err) {
       if (err.code === 'P2002') {
@@ -83,7 +85,7 @@ export class CategoryController {
   @Delete('/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const categoryProducts = await this.productService.findAll({
-      categoryId: id,
+      categoryId: [id],
     });
 
     if (!isEmpty(categoryProducts)) {

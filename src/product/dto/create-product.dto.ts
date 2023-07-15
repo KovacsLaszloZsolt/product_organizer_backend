@@ -1,6 +1,8 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreateProductDto {
   @IsNotEmpty()
+  @IsString()
   name: string;
 
   @IsOptional()
@@ -8,22 +10,27 @@ export class CreateProductDto {
   description?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   categoryId: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   ownerId: number;
 
   @IsOptional()
-  @IsString()
-  pictures: string[];
+  @Type(() => Number)
+  @IsNumber()
+  imagesFolderId: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   price: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   size: number;
 
@@ -31,24 +38,3 @@ export class CreateProductDto {
   @IsString()
   picturesRoute: string;
 }
-
-// id Int @id @default(autoincrement())
-//   created_at DateTime @default(now())
-//   updated_at DateTime @updatedAt
-//   name String
-//   description String?
-//   category Category @relation(fields: [categoryId], references: [id])
-//   categoryId Int
-//   owner ProductOwner @relation(fields: [ownerId], references: [id])
-//   ownerId Int
-//   pictures String[]
-//   price Int
-//   size Int
-//   picturesRoute String
-// Név
-// Leírás
-// Méret
-// Almbumhely
-// Fotó
-// Felhasználónév
-// Ár

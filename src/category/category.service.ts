@@ -13,6 +13,16 @@ export class CategoryService {
   async findAll(filter?: Record<string, unknown>) {
     return this.prisma.category.findMany({
       where: { ...filter, deleted_at: null },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+  }
+
+  async findAllByIds(filter: number[]) {
+    return this.prisma.category.findMany({
+      where: { id: { in: filter } },
+      orderBy: { name: 'asc' },
     });
   }
 

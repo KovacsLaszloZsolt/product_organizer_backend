@@ -11,14 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { isEmpty } from 'lodash';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { RolesGuard } from 'src/auth/guard';
+import { ProductService } from 'src/product/product.service';
+import { UpdateOwnerDto } from './dto';
 import { CreateOwnerDto } from './dto/createOwner.dto';
 import { OwnerService } from './owner.service';
-import { ProductService } from 'src/product/product.service';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { isEmpty } from 'lodash';
-import { UpdateOwnerDto } from './dto';
 
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Roles('ADMIN')
@@ -82,7 +81,7 @@ export class OwnerController {
 
   @Delete('/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    const ownerProducts = await this.productsService.findAll({ ownerId: id });
+    const ownerProducts = await this.productsService.findAll({ ownerId: [id] });
 
     if (ownerProducts.length) {
       return new BadRequestException(

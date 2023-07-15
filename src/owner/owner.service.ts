@@ -14,6 +14,14 @@ export class OwnerService {
   async findAll(filter?: any) {
     return this.prisma.productOwner.findMany({
       where: { ...filter },
+      orderBy: { name: 'asc' },
+    });
+  }
+
+  async findAllByIds(filter: number[]) {
+    return this.prisma.productOwner.findMany({
+      where: { id: { in: filter } },
+      orderBy: { name: 'asc' },
     });
   }
 

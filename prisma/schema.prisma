@@ -8,7 +8,9 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement()) @unique
+  id         Int       @id @unique @default(autoincrement())
+  firstName  String
+  lastName   String
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   email      String    @unique
@@ -18,7 +20,7 @@ model User {
 }
 
 model Category {
-  id         Int       @id @default(autoincrement()) @unique
+  id         Int       @id @unique @default(autoincrement())
   created_at DateTime  @default(now())
   name       String    @unique
   deleted_at DateTime?
@@ -27,7 +29,7 @@ model Category {
 }
 
 model ProductOwner {
-  id         Int       @id @default(autoincrement()) @unique
+  id         Int       @id @unique @default(autoincrement())
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   name       String    @unique
@@ -36,21 +38,41 @@ model ProductOwner {
 }
 
 model Product {
-  id            Int           @id @default(autoincrement()) @unique
-  created_at    DateTime      @default(now())
-  updated_at    DateTime      @updatedAt
-  name          String
-  description   String?
-  pictures      String[]
-  price         Int?
-  size          Int?
-  picturesRoute String?
-  ownerId       Int?
-  categoryId    Int?
-  deleted_at    DateTime?
-  status Status @default(AVAILABLE)
-  category      Category?     @relation(fields: [categoryId], references: [id])
-  owner         ProductOwner? @relation(fields: [ownerId], references: [id])
+  id             Int            @id @unique @default(autoincrement())
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  name           String
+  description    String?
+  images         Image[]
+  price          Int?
+  brandId        Int?
+  ownerId        Int?
+  categoryId     Int?
+  deleted_at     DateTime?
+  imagesFolderId Int?
+  status         Status         @default(AVAILABLE)
+  category       Category?      @relation(fields: [categoryId], references: [id])
+  owner          ProductOwner?  @relation(fields: [ownerId], references: [id])
+  imagesFolder   ImagesFolder?  @relation(fields: [imagesFolderId], references: [id])
+  brand       Brand?      @relation(fields: [brandId], references: [id])
+}
+
+model Brand {
+  id         Int       @id @unique @default(autoincrement())
+  created_at DateTime  @default(now())
+  name       String    @unique
+  deleted_at DateTime?
+  updated_at DateTime  @updatedAt
+  products   Product[]
+}
+
+model Image {
+  id                 Int      @id @unique @default(autoincrement())
+  originalName       String
+  cloudinaryId       String
+  cloudinaryPublicId String
+  product            Product? @relation(fields: [productId], references: [id])
+  productId          Int?
 }
 
 enum Role {
@@ -62,4 +84,13 @@ enum Status {
   AVAILABLE
   BOOKED
   SOLD
+}
+
+model ImagesFolder {
+  id        Int      @id @unique @default(autoincrement())
+  name       String    @unique
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+  updated_at DateTime  @updatedAt
+  products   Product[]
 }
