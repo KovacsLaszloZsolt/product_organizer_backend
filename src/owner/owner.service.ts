@@ -25,7 +25,7 @@ export class OwnerService {
     });
   }
 
-  async findOne(filter: Record<string, unknown>) {
+  async findOne(filter) {
     return this.prisma.productOwner.findUnique({ where: filter });
   }
 

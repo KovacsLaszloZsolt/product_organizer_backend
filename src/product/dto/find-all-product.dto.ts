@@ -1,4 +1,3 @@
-import { Status } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsArray, IsOptional } from 'class-validator';
 
@@ -19,7 +18,7 @@ export class FindAllProductDto {
   @Transform(({ value }: Value) => value.split(','))
   @IsArray()
   @IsOptional()
-  status?: Status[];
+  status?;
 
   @Transform(({ value }: Value) => value.split(',').map((item) => +item))
   @IsArray()

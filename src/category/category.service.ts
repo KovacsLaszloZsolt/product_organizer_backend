@@ -32,7 +32,7 @@ export class CategoryService {
     });
   }
 
-  async findOne(filter: Record<string, unknown>) {
+  async findOne(filter) {
     return this.prisma.category.findUnique({ where: filter });
   }
 

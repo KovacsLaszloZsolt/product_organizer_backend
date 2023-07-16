@@ -82,27 +82,28 @@ export class ProductService {
     const pageQuery = {} as Record<string, unknown>;
 
     if (categoryId) {
-      dbFilter.categoryId = { in: categoryId };
+      dbFilter.categoryId = { in: [categoryId] };
     }
 
     if (ownerId) {
-      dbFilter.ownerId = { in: ownerId };
+      dbFilter.ownerId = { in: [ownerId] };
     }
 
     if (status) {
-      dbFilter.status = { in: status };
+      dbFilter.status = { in: [status] };
     }
 
     if (imagesFolderId) {
-      dbFilter.imagesFolderId = { in: imagesFolderId };
+      dbFilter.imagesFolderId = { in: [imagesFolderId] };
     }
 
     if (brandId) {
-      dbFilter.brandId = { in: brandId };
+      dbFilter.brandId = { in: [brandId] };
     }
 
     if (page) {
       const itemsPerPage = 5;
+
       pageQuery.skip = (page - 1) * itemsPerPage;
       pageQuery.take = itemsPerPage;
     }

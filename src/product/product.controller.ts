@@ -100,11 +100,17 @@ export class ProductController {
     let imagesWithUrl;
     if (imgs) {
       imagesWithUrl = createCloudinaryImageUrl(
-        imgs.map((image) => ({
-          id: image.id,
-          publicId: image.cloudinaryPublicId,
-          originalName: image.originalName,
-        })),
+        imgs.map(
+          (image: {
+            id: number;
+            cloudinaryPublicId: string;
+            originalName: string;
+          }) => ({
+            id: image.id,
+            publicId: image.cloudinaryPublicId,
+            originalName: image.originalName,
+          }),
+        ),
       );
     }
 

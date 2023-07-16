@@ -32,7 +32,7 @@ export class BrandService {
     });
   }
 
-  async findOne(filter: Record<string, unknown>) {
+  async findOne(filter) {
     return this.prisma.brand.findUnique({ where: filter });
   }
 
