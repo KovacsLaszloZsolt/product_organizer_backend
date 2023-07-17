@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { itemsPerPage } from 'src/constants/itemPerPage';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindAllProductDto } from './dto/find-all-product.dto';
@@ -102,8 +103,6 @@ export class ProductService {
     }
 
     if (page) {
-      const itemsPerPage = 5;
-
       pageQuery.skip = (page - 1) * itemsPerPage;
       pageQuery.take = itemsPerPage;
     }

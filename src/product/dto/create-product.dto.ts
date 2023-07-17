@@ -35,6 +35,11 @@ export class CreateProductDto {
   size: number;
 
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  brandId: number;
+
+  @IsOptional()
   @IsString()
   picturesRoute: string;
 }
