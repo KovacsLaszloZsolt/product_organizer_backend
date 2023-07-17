@@ -17,6 +17,7 @@ export const createCloudinaryImageUrl = (
         quality: 'auto',
       },
       fetch_format: 'auto',
+      secure: true,
     }),
     fullSizeUrl: cloudinary.url(image.publicId, {
       transformation: {
@@ -27,6 +28,7 @@ export const createCloudinaryImageUrl = (
         quality: 'auto',
       },
       fetch_format: 'auto',
+      secure: true,
     }),
   }));
   return imagesWithUrl;

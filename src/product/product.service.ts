@@ -82,23 +82,23 @@ export class ProductService {
     const pageQuery = {} as Record<string, unknown>;
 
     if (categoryId) {
-      dbFilter.categoryId = { in: [categoryId] };
+      dbFilter.categoryId = { in: categoryId };
     }
 
     if (ownerId) {
-      dbFilter.ownerId = { in: [ownerId] };
+      dbFilter.ownerId = { in: ownerId };
     }
 
     if (status) {
-      dbFilter.status = { in: [status] };
+      dbFilter.status = { in: status };
     }
 
     if (imagesFolderId) {
-      dbFilter.imagesFolderId = { in: [imagesFolderId] };
+      dbFilter.imagesFolderId = { in: imagesFolderId };
     }
 
     if (brandId) {
-      dbFilter.brandId = { in: [brandId] };
+      dbFilter.brandId = { in: brandId };
     }
 
     if (page) {
@@ -130,6 +130,12 @@ export class ProductService {
     return this.prisma.product.findMany({
       where: dbFilter,
       include: {
+        brand: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
         category: {
           select: {
             name: true,

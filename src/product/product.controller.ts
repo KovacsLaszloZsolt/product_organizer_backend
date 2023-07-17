@@ -18,6 +18,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { isEmpty, isNil } from 'lodash';
 import { Roles } from 'src/auth/decorator';
 import { RolesGuard } from 'src/auth/guard';
+import { BrandService } from 'src/brand/brand.service';
 import { CategoryService } from 'src/category/category.service';
 import { ImageService } from 'src/image/image.service';
 import { OwnerService } from 'src/owner/owner.service';
@@ -37,10 +38,11 @@ import { ProductService } from './product.service';
 @Controller('api/product')
 export class ProductController {
   constructor(
-    private readonly productsService: ProductService,
-    private readonly ownerService: OwnerService,
+    private readonly brandService: BrandService,
     private readonly categoryService: CategoryService,
     private readonly imageService: ImageService,
+    private readonly ownerService: OwnerService,
+    private readonly productsService: ProductService,
   ) {}
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -121,8 +123,25 @@ export class ProductController {
   async findAll(@Query() params?: FindAllProductDto) {
     const filter = {} as FindAllProductDto;
 
-    const { ownerId, categoryId, status, imagesFolderId, search, page } =
-      params ?? ({} as FindAllProductDto);
+    const {
+      ownerId,
+      categoryId,
+      status,
+      imagesFolderId,
+      brandId,
+      search,
+      page,
+    } = params ?? ({} as FindAllProductDto);
+
+    if (brandId) {
+      const brands = await this.brandService.findAllByIds(brandId);
+
+      if (isEmpty(brands)) {
+        throw new BadRequestException('Invalid brand id');
+      }
+
+      filter.brandId = brandId;
+    }
 
     if (ownerId) {
       const selectedOwner = await this.ownerService.findAllByIds(ownerId);
