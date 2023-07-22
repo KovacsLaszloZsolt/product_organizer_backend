@@ -33,8 +33,9 @@ export const setFilters = async (
   }
 
   if (ownerId) {
+    console.log(ownerId.filter((id) => id !== -1));
     const selectedOwner = await services.ownerService.findAllByIds(
-      ownerId.filter((id) => id === -1),
+      ownerId.filter((id) => id !== -1),
     );
 
     if (isEmpty(selectedOwner) && !ownerId.includes(-1)) {
@@ -46,7 +47,7 @@ export const setFilters = async (
 
   if (categoryId) {
     const selectedCategory = await services.categoryService.findAllByIds(
-      categoryId.filter((id) => id === -1),
+      categoryId.filter((id) => id !== -1),
     );
 
     if (isEmpty(selectedCategory) && !categoryId.includes(-1)) {
@@ -63,7 +64,7 @@ export const setFilters = async (
   if (imagesFolderId) {
     const selectedImagesFolder =
       await services.imageService.findImagesFoldersByIds(
-        imagesFolderId.filter((id) => id === -1),
+        imagesFolderId.filter((id) => id !== -1),
       );
 
     if (isEmpty(selectedImagesFolder) && !imagesFolderId.includes(-1)) {
