@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { itemsPerPage } from 'src/constants/itemPerPage';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { createDbFilters } from 'src/utils/createDbFilters';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindAllProductDto } from './dto/find-all-product.dto';
 import { SaveImageDto } from './dto/save-image.dto';
@@ -70,36 +71,13 @@ export class ProductService {
   }
 
   async findAll(filter: FindAllProductDto) {
-    const {
-      categoryId,
-      ownerId,
-      status,
-      imagesFolderId,
-      brandId,
-      search,
-      page,
-    } = filter;
-    const dbFilter = {} as Record<string, unknown>;
+    const { status, search, page, ...rest } = filter;
+
+    const dbFilter = createDbFilters(rest);
     const pageQuery = {} as Record<string, unknown>;
-
-    if (categoryId) {
-      dbFilter.categoryId = { in: categoryId };
-    }
-
-    if (ownerId) {
-      dbFilter.ownerId = { in: ownerId };
-    }
 
     if (status) {
       dbFilter.status = { in: status };
-    }
-
-    if (imagesFolderId) {
-      dbFilter.imagesFolderId = { in: imagesFolderId };
-    }
-
-    if (brandId) {
-      dbFilter.brandId = { in: brandId };
     }
 
     if (page) {
@@ -210,6 +188,39 @@ export class ProductService {
       data: {
         deleted_at: new Date(),
       },
+    });
+  }
+
+  async count(filter: FindAllProductDto) {
+    const { status, search, ...rest } = filter;
+
+    const dbFilter = createDbFilters(rest);
+
+    if (status) {
+      dbFilter.status = { in: status };
+    }
+
+    if (search) {
+      dbFilter.OR = [
+        {
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          description: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+
+    dbFilter.deleted_at = null;
+
+    return this.prisma.product.count({
+      where: dbFilter,
     });
   }
 }

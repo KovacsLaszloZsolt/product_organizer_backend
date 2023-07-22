@@ -35,5 +35,5 @@ export class FindAllProductDto {
 
   @Transform(({ value }: Value) => +value)
   @IsOptional()
-  page?: number;
+  page?: number | undefined;
 }

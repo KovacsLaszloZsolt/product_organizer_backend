@@ -23,6 +23,7 @@ import { CategoryService } from 'src/category/category.service';
 import { ImageService } from 'src/image/image.service';
 import { OwnerService } from 'src/owner/owner.service';
 import { createCloudinaryImageUrl } from 'src/utils/createCloudinaryImageUrl';
+import { setFilters } from 'src/utils/setFilters';
 import {
   ValidMimeType,
   validateImageMimeType,
@@ -119,66 +120,40 @@ export class ProductController {
     return { ...productWithImages, images: imagesWithUrl };
   }
 
+  @Get('/count')
+  async countProducts(@Query() params?: FindAllProductDto) {
+    const { search, ...rest } = params ?? ({} as FindAllProductDto);
+    const filter = await setFilters(
+      {
+        brandService: this.brandService,
+        ownerService: this.ownerService,
+        categoryService: this.categoryService,
+        imageService: this.imageService,
+      },
+      rest,
+    );
+
+    const numberOfProducts = await this.productsService.count({
+      ...filter,
+      search,
+    });
+
+    return numberOfProducts;
+  }
+
   @Get()
   async findAll(@Query() params?: FindAllProductDto) {
-    const filter = {} as FindAllProductDto;
+    const { search, page, ...rest } = params ?? ({} as FindAllProductDto);
 
-    const {
-      ownerId,
-      categoryId,
-      status,
-      imagesFolderId,
-      brandId,
-      search,
-      page,
-    } = params ?? ({} as FindAllProductDto);
-
-    if (brandId) {
-      const brands = await this.brandService.findAllByIds(brandId);
-
-      if (isEmpty(brands)) {
-        throw new BadRequestException('Invalid brand id');
-      }
-
-      filter.brandId = brandId;
-    }
-
-    if (ownerId) {
-      const selectedOwner = await this.ownerService.findAllByIds(ownerId);
-
-      if (isEmpty(selectedOwner)) {
-        throw new BadRequestException('Invalid owner id');
-      }
-
-      filter.ownerId = ownerId;
-    }
-
-    if (categoryId) {
-      const selectedCategory = await this.categoryService.findAllByIds(
-        categoryId,
-      );
-
-      if (isEmpty(selectedCategory)) {
-        throw new BadRequestException('Invalid category id');
-      }
-
-      filter.categoryId = categoryId;
-    }
-
-    if (status || !isEmpty(status)) {
-      filter.status = status;
-    }
-
-    if (imagesFolderId) {
-      const selectedImagesFolder =
-        await this.imageService.findImagesFoldersByIds(imagesFolderId);
-
-      if (isEmpty(selectedImagesFolder)) {
-        throw new BadRequestException('Invalid image folder id');
-      }
-
-      filter.imagesFolderId = imagesFolderId;
-    }
+    const filter = await setFilters(
+      {
+        brandService: this.brandService,
+        ownerService: this.ownerService,
+        categoryService: this.categoryService,
+        imageService: this.imageService,
+      },
+      rest,
+    );
 
     const products = await this.productsService.findAll({
       ...filter,
