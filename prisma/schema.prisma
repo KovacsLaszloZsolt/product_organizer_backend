@@ -55,6 +55,7 @@ model Product {
   owner          ProductOwner?  @relation(fields: [ownerId], references: [id])
   imagesFolder   ImagesFolder?  @relation(fields: [imagesFolderId], references: [id])
   brand       Brand?      @relation(fields: [brandId], references: [id])
+  note           String?
 }
 
 model Brand {
