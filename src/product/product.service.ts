@@ -174,6 +174,7 @@ export class ProductService {
     id: number,
     updateProductDto: Partial<Omit<UpdateProductDto, 'deletedImages'>>,
   ) {
+    console.log(updateProductDto);
     return this.prisma.product.update({
       where: { id },
       data: {
