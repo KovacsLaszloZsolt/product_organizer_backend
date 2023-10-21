@@ -85,6 +85,7 @@ enum Status {
   AVAILABLE
   BOOKED
   SOLD
+  POST
 }
 
 model ImagesFolder {

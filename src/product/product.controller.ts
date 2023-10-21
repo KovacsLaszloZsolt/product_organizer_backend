@@ -55,6 +55,7 @@ export class ProductController {
     @Body() createProductDto: CreateProductDto,
   ) {
     let images;
+
     if (files && !isEmpty(files)) {
       try {
         const promises = files.map((file) => {

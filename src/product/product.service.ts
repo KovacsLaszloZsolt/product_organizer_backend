@@ -134,7 +134,7 @@ export class ProductService {
         },
       },
       ...pageQuery,
-      orderBy: [{ updated_at: 'desc' }],
+      orderBy: [{ created_at: 'desc' }],
     });
   }
 
