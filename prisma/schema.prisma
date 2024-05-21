@@ -54,8 +54,9 @@ model Product {
   category       Category?      @relation(fields: [categoryId], references: [id])
   owner          ProductOwner?  @relation(fields: [ownerId], references: [id])
   imagesFolder   ImagesFolder?  @relation(fields: [imagesFolderId], references: [id])
-  brand       Brand?      @relation(fields: [brandId], references: [id])
+  brand          Brand?         @relation(fields: [brandId], references: [id])
   note           String?
+  withDelivery   Boolean        @default(false)
 }
 
 model Brand {
@@ -86,6 +87,7 @@ enum Status {
   BOOKED
   SOLD
   POST
+  PENDING
 }
 
 model ImagesFolder {

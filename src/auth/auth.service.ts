@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { AuthDto, SignUpDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -28,11 +29,11 @@ export class AuthService {
 
       return user;
     } catch (err) {
-      // if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      if (err.code === 'P2002') {
-        throw new BadRequestException('User already exists');
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2002') {
+          throw new BadRequestException('User already exists');
+        }
       }
-      // }
     }
   }
 

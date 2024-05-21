@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  backend:
+    build: ./
+    container_name: nestjs_api
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgres://product_store_2_7kyx_user:8HPtdkfHBgBa6IWxYy86hdoCUvKDoAc5@dpg-ckle6iqv7m0s738ved3g-a.frankfurt-postgres.render.com/product_store_2_7kyx
+      - JWT_SECRET_KEY=Super_Secret
+      - CLOUDINARY_NAME=dwe5oukml
+      - CLOUDINARY_API_KEY=143854649819173
+      - CLOUDINARY_API_SECRET=6TNARY-wjkLl_M8fGxDghprzqLY
+ports:
+  - 3000:3000
+depends_on:
+  - database
+  - cloudinary

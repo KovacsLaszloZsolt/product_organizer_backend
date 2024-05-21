@@ -1,5 +1,12 @@
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Status } from '@prisma/client';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
@@ -42,4 +49,13 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   picturesRoute: string;
+
+  @IsString()
+  status: Status;
+
+  @Transform(({ value }) => {
+    return value === 'true' ? true : false;
+  })
+  @IsBoolean()
+  withDelivery: boolean;
 }

@@ -20,6 +20,7 @@ import { Roles } from 'src/auth/decorator';
 import { RolesGuard } from 'src/auth/guard';
 import { BrandService } from 'src/brand/brand.service';
 import { CategoryService } from 'src/category/category.service';
+import { descriptionFixMessage } from 'src/constants/descriptionFixMessage';
 import { ImageService } from 'src/image/image.service';
 import { OwnerService } from 'src/owner/owner.service';
 import { createCloudinaryImageUrl } from 'src/utils/createCloudinaryImageUrl';
@@ -54,6 +55,7 @@ export class ProductController {
     @UploadedFiles() files: Express.Multer.File[],
     @Body() createProductDto: CreateProductDto,
   ) {
+    console.log({ createProductDto });
     let images;
 
     if (files && !isEmpty(files)) {
@@ -87,10 +89,16 @@ export class ProductController {
 
     let productWithImages;
 
+    const { description, withDelivery, ...rest } = createProductDto;
+
     try {
       productWithImages = await this.productsService.create({
-        ...createProductDto,
+        ...rest,
+        description: withDelivery
+          ? `${description} ${descriptionFixMessage}`
+          : description,
         images: images ?? [],
+        withDelivery,
       });
     } catch (err) {
       await this.imageService.deleteImagesFromCloudinary({
